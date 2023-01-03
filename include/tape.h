@@ -6,26 +6,48 @@
 
 struct Tape {
 
-    Tape(const std::string& filename, bool formatting);
+    Tape(const std::string &dirname, const std::string &filename);
 
+private:
+    Tape(const std::string &_filename, int current, auto pos);
+public:
     ~Tape() {
+        file.flush();
         file.close();
     }
 
-    Tape make_copy(std::string filename);
+    Tape make_copy(const std::string &filename) const;
 
-    int r_current_cell() {
-        return current;
-    }
+    int r_current_cell() const;
 
-    int w_current_cell(int);
+    void w_current_cell(int);
 
     void move_left();
 
     void move_right();
 
+    void move_to_start();
+
+    void move(int);
+
+    void swap(Tape &other) {
+        using std::swap;
+        swap(current, other.current);
+        swap(filename, other.filename);
+        auto pos1 = file.tellg();
+        auto pos2 = other.file.tellg();
+        file.close();
+        other.file.close();
+        file = std::fstream(filename, std::ios::in | std::ios::out);
+        file.seekg(pos2);
+        other.file = std::fstream(other.filename, std::ios::in | std::ios::out);
+        other.file.seekg(pos1);
+    }
+
+    std::string filename;
+
 private:
     int current;
-    std::fstream file;
-    static const int NUM_SIZE = 11; //std::to_string(INT32_MIN).size();
+    mutable std::fstream file;
+    static const int NUM_SIZE = 11;//std::to_string(INT32_MIN).size();
 };
