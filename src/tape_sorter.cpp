@@ -1,4 +1,7 @@
 #include "tape_sorter.h"
+#include <filesystem>
+
+static std::string PATH_SEP = std::string(1, std::filesystem::path::preferred_separator);
 
 extern Config cfg;
 
@@ -83,5 +86,5 @@ void Tape_sorter::sort(std::string input_file, std::string output_file) {
         Tape tmp4 = tmp1.make_copy(input_file + "_formatted" + std::to_string(tmp_file_number++ % max_tmp_files));
         tmp2.swap(tmp4);
     }
-    tmp1.save(cfg.FILE_DIR + "\\" + output_file);
+    tmp1.save(cfg.FILE_DIR + PATH_SEP + output_file);
 }

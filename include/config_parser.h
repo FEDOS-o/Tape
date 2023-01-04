@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include <iostream>
+#include <filesystem>
 // расходы памяти на остальную программу (не хранение части ленты)
 const int CONST_RAM = 0;
 
@@ -15,6 +16,7 @@ struct Config {
     std::string TMP_DIR;
     std::string FILE_DIR;
 
+    std::string PATH_SEP = std::string(1, std::filesystem::path::preferred_separator);
 
     Config(const std::string &filename) {
         std::ifstream fin(filename);
@@ -35,10 +37,10 @@ struct Config {
                 sin >> S_DELAY;
             } else if (line.find("$FILE_DIR$") != -1) {
                 sin >> FILE_DIR;
-                FILE_DIR += "\\";
+                FILE_DIR += PATH_SEP;
             } else if (line.find("$TMP_DIR") != -1) {
                 sin >> TMP_DIR;
-                TMP_DIR += "\\";
+                TMP_DIR += PATH_SEP;
             }
         }
     }

@@ -1,12 +1,13 @@
 #include "tape_sorter.h"
 #include <chrono>
+#include <filesystem>
 #include <gtest/gtest.h>
 #include <random>
 
+std::string SEP = std::string(1, std::filesystem::path::preferred_separator);
 
 std::mt19937 rnd(std::chrono::steady_clock::now().time_since_epoch().count());
-
-Config cfg("..\\tests\\config.txt");
+Config cfg(".." + SEP + "tests" + SEP + "config.txt");
 
 
 bool compare_files(std::string filename1, std::string filename2) {
@@ -113,7 +114,7 @@ TEST(tape, write_straight) {
             t.write(11 - i);
         }
     }
-    EXPECT_TRUE(compare_files(filename, cfg.FILE_DIR + "\\sample321_formatted"));
+    EXPECT_TRUE(compare_files(filename, cfg.FILE_DIR + "sample321_formatted"));
 }
 
 TEST(tape, write_double) {
@@ -132,7 +133,7 @@ TEST(tape, write_double) {
             t.write(11 - i);
         }
     }
-    EXPECT_TRUE(compare_files(filename, cfg.FILE_DIR + "\\sample123_formatted"));
+    EXPECT_TRUE(compare_files(filename, cfg.FILE_DIR + "sample123_formatted"));
 }
 
 TEST(tape, haotic_writing) {
@@ -159,7 +160,7 @@ TEST(tape, haotic_writing) {
         t.move_right();
         t.write(1111);
     }
-    EXPECT_TRUE(compare_files(filename, cfg.FILE_DIR + "\\" + "haotic_writing_result_formatted"));
+    EXPECT_TRUE(compare_files(filename, cfg.FILE_DIR + "haotic_writing_result_formatted"));
 }
 
 TEST(tape, move_to_start) {
@@ -177,7 +178,7 @@ TEST(tape, move_to_start) {
             t.move_right();
         }
     }
-    EXPECT_TRUE(compare_files(filename, cfg.FILE_DIR + "\\sample321_formatted"));
+    EXPECT_TRUE(compare_files(filename, cfg.FILE_DIR + "sample321_formatted"));
 }
 
 TEST(tape, move) {
@@ -225,8 +226,8 @@ TEST(tape, swap) {
         t2.move_left();
         EXPECT_EQ(t2.read(), 2);
     }
-    EXPECT_TRUE(compare_files(filename2, cfg.FILE_DIR + "\\sample321_formatted"));
-    EXPECT_TRUE(compare_files(filename1, cfg.FILE_DIR + "\\sample123_formatted"));
+    EXPECT_TRUE(compare_files(filename2, cfg.FILE_DIR + "sample321_formatted"));
+    EXPECT_TRUE(compare_files(filename1, cfg.FILE_DIR + "sample123_formatted"));
 }
 
 
@@ -236,7 +237,7 @@ TEST(tape_sorter, already_sorted) {
         cfg.M = 3;
         Tape_sorter::sort("sample123", "sample123_sort_result");
     }
-    EXPECT_TRUE(compare_files(cfg.FILE_DIR + "\\sample123_formatted", cfg.FILE_DIR + "\\sample123_sort_result"));
+    EXPECT_TRUE(compare_files(cfg.FILE_DIR + "sample123_formatted", cfg.FILE_DIR + "sample123_sort_result"));
 }
 
 TEST(tape_sorter, reversed_order) {
@@ -245,7 +246,7 @@ TEST(tape_sorter, reversed_order) {
         cfg.M = 3;
         Tape_sorter::sort("sample321", "sample123_sort_result");
     }
-    bool res = compare_files(cfg.FILE_DIR + "\\sample123_formatted", cfg.FILE_DIR + "\\sample123_sort_result");
+    bool res = compare_files(cfg.FILE_DIR + "sample123_formatted", cfg.FILE_DIR + "sample123_sort_result");
     EXPECT_TRUE(res);
 }
 
@@ -257,7 +258,7 @@ TEST(tape_sorter, different_M) {
             cfg.M = i;
             Tape_sorter::sort("sample321", "sample123_sort_result");
         }
-        bool res = compare_files(cfg.FILE_DIR + "\\sample123_formatted", cfg.FILE_DIR + "\\sample123_sort_result");
+        bool res = compare_files(cfg.FILE_DIR + "sample123_formatted", cfg.FILE_DIR + "sample123_sort_result");
         EXPECT_TRUE(res);
     }
 }
@@ -266,7 +267,7 @@ TEST(tape_sorter, random_numbers) {
     cfg.N = 25;
     cfg.M = 7;
     std::vector<int> result;
-    std::ofstream random_test(cfg.FILE_DIR + "\\random_test");
+    std::ofstream random_test(cfg.FILE_DIR + "random_test");
     for (int i = 0; i < cfg.N; i++) {
         int r = static_cast<int>(rnd());
         result.push_back(r);
@@ -274,7 +275,7 @@ TEST(tape_sorter, random_numbers) {
     }
     random_test.close();
     std::sort(result.begin(), result.end());
-    random_test = std::ofstream(cfg.FILE_DIR + "\\random_test_sorted");
+    random_test = std::ofstream(cfg.FILE_DIR + "random_test_sorted");
     for (int i = 0; i < cfg.N; i++) {
         random_test << result[i] << ' ';
     }
@@ -283,7 +284,7 @@ TEST(tape_sorter, random_numbers) {
         Tape answer(cfg.FILE_DIR + "random_test_sorted");
         Tape_sorter::sort("random_test", "random_test_result");
     }
-    bool cmp = compare_files(cfg.TMP_DIR + "\\random_test_sorted_formatted", cfg.FILE_DIR + "\\random_test_result");
+    bool cmp = compare_files(cfg.TMP_DIR + "random_test_sorted_formatted", cfg.FILE_DIR + "random_test_result");
     EXPECT_TRUE(cmp);
 }
 
@@ -293,7 +294,7 @@ TEST(tape_sorter, random_number_diff_M) {
     for (int j = 2; j < 50; j++) {
         cfg.M = j;
         std::vector<int> result;
-        std::ofstream random_test(cfg.FILE_DIR + "\\random_test");
+        std::ofstream random_test(cfg.FILE_DIR + "random_test");
         for (int i = 0; i < cfg.N; i++) {
             int r = static_cast<int>(rnd());
             result.push_back(r);
@@ -301,7 +302,7 @@ TEST(tape_sorter, random_number_diff_M) {
         }
         random_test.close();
         std::sort(result.begin(), result.end());
-        random_test = std::ofstream(cfg.FILE_DIR + "\\random_test_sorted");
+        random_test = std::ofstream(cfg.FILE_DIR + "random_test_sorted");
         for (int i = 0; i < cfg.N; i++) {
             random_test << result[i] << ' ';
         }
@@ -310,7 +311,7 @@ TEST(tape_sorter, random_number_diff_M) {
             Tape answer(cfg.FILE_DIR + "random_test_sorted");
             Tape_sorter::sort("random_test", "random_test_result");
         }
-        bool cmp = compare_files(cfg.TMP_DIR + "\\random_test_sorted_formatted", cfg.FILE_DIR + "\\random_test_result");
+        bool cmp = compare_files(cfg.TMP_DIR + "random_test_sorted_formatted", cfg.FILE_DIR + "random_test_result");
         EXPECT_TRUE(cmp);
     }
 }
