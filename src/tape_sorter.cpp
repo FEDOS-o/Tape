@@ -2,6 +2,63 @@
 
 extern Config cfg;
 
+namespace {
+
+    void merge_blocks(Tape &tmp1, Tape &tmp2, Tape &res, size_t block_size, size_t N) {
+        tmp2.move(block_size);
+        size_t pointer1, pointer2;
+        pointer1 = 0, pointer2 = block_size;
+        size_t left = N;
+        while (left) {
+            size_t border1 = std::min(pointer1 + block_size, N), border2 = std::min(pointer2 + block_size, N);
+            while (pointer1 < border1 || pointer2 < border2) {
+                if (pointer1 >= border1) {
+                    auto x = tmp2.read();
+                    res.write(x);
+                    left--;
+                    pointer2++;
+                    if (pointer2 < N)
+                        tmp2.move_right();
+                    if (left)
+                        res.move_right();
+                } else if (pointer2 >= border2) {
+                    auto x = tmp1.read();
+                    res.write(x);
+                    left--;
+                    pointer1++;
+                    if (pointer1 < N)
+                        tmp1.move_right();
+                    if (left)
+                        res.move_right();
+                } else {
+                    auto x1 = tmp1.read(), x2 = tmp2.read();
+                    if (x1 <= x2) {
+                        res.write(x1);
+                        left--;
+                        pointer1++;
+                        res.move_right();
+                        if (pointer1 < N)
+                            tmp1.move_right();
+                    } else {
+                        res.write(x2);
+                        left--;
+                        pointer2++;
+                        res.move_right();
+                        if (pointer2 < N)
+                            tmp2.move_right();
+                    }
+                }
+            }
+            if (pointer1 + block_size < N)
+                tmp1.move(block_size);
+            pointer1 += block_size;
+            if (pointer2 + block_size < N)
+                tmp2.move(block_size);
+            pointer2 += block_size;
+        }
+    }
+}// namespace
+
 void Tape_sorter::sort(std::string input_file, std::string output_file) {
     size_t N = cfg.N, M = cfg.M;
     std::vector<Tape> tmp;
@@ -33,58 +90,4 @@ void Tape_sorter::sort(std::string input_file, std::string output_file) {
         tmp2.swap(tmp4);
     }
     Tape result = tmp1.make_copy(cfg.FILE_DIR + "\\" + output_file);
-}
-
-void Tape_sorter::merge_blocks(Tape &tmp1, Tape &tmp2, Tape &res, size_t block_size, size_t N) {
-    tmp2.move(block_size);
-    size_t pointer1, pointer2;
-    pointer1 = 0, pointer2 = block_size;
-    size_t left = N;
-    while (left) {
-        size_t border1 = std::min(pointer1 + block_size, N), border2 = std::min(pointer2 + block_size, N);
-        while (pointer1 < border1 || pointer2 < border2) {
-            if (pointer1 >= border1) {
-                auto x = tmp2.read();
-                res.write(x);
-                left--;
-                pointer2++;
-                if (pointer2 < N)
-                    tmp2.move_right();
-                if (left)
-                    res.move_right();
-            } else if (pointer2 >= border2) {
-                auto x = tmp1.read();
-                res.write(x);
-                left--;
-                pointer1++;
-                if (pointer1 < N)
-                    tmp1.move_right();
-                if (left)
-                    res.move_right();
-            } else {
-                auto x1 = tmp1.read(), x2 = tmp2.read();
-                if (x1 <= x2) {
-                    res.write(x1);
-                    left--;
-                    pointer1++;
-                    res.move_right();
-                    if (pointer1 < N)
-                        tmp1.move_right();
-                } else {
-                    res.write(x2);
-                    left--;
-                    pointer2++;
-                    res.move_right();
-                    if (pointer2 < N)
-                        tmp2.move_right();
-                }
-            }
-        }
-        if (pointer1 + block_size < N)
-            tmp1.move(block_size);
-        pointer1 += block_size;
-        if (pointer2 + block_size < N)
-            tmp2.move(block_size);
-        pointer2 += block_size;
-    }
 }
