@@ -4,57 +4,48 @@ extern Config cfg;
 
 namespace {
 
+
+    void merge_move(Tape &t, size_t &pointer, int shift) {
+        pointer += shift;
+        if (pointer < cfg.N) {
+            t.move(shift);
+        }
+    }
+
     void merge_blocks(Tape &tmp1, Tape &tmp2, Tape &res, size_t block_size, size_t N) {
         tmp2.move(block_size);
-        size_t pointer1, pointer2;
+        size_t pointer1, pointer2, res_pointer = 0;
         pointer1 = 0, pointer2 = block_size;
-        size_t left = N;
-        while (left) {
+        while (res_pointer != N) {
             size_t border1 = std::min(pointer1 + block_size, N), border2 = std::min(pointer2 + block_size, N);
             while (pointer1 < border1 || pointer2 < border2) {
                 if (pointer1 >= border1) {
                     auto x = tmp2.read();
                     res.write(x);
-                    left--;
-                    pointer2++;
-                    if (pointer2 < N)
-                        tmp2.move_right();
-                    if (left)
-                        res.move_right();
+                    merge_move(res, res_pointer, 1);
+                    merge_move(tmp2, pointer2, 1);
                 } else if (pointer2 >= border2) {
                     auto x = tmp1.read();
                     res.write(x);
-                    left--;
-                    pointer1++;
-                    if (pointer1 < N)
-                        tmp1.move_right();
-                    if (left)
-                        res.move_right();
+                    merge_move(res, res_pointer, 1);
+                    merge_move(tmp1, pointer1, 1);
+
                 } else {
                     auto x1 = tmp1.read(), x2 = tmp2.read();
                     if (x1 <= x2) {
                         res.write(x1);
-                        left--;
-                        pointer1++;
-                        res.move_right();
-                        if (pointer1 < N)
-                            tmp1.move_right();
+                        merge_move(res, res_pointer, 1);
+                        merge_move(tmp1, pointer1, 1);
+
                     } else {
                         res.write(x2);
-                        left--;
-                        pointer2++;
-                        res.move_right();
-                        if (pointer2 < N)
-                            tmp2.move_right();
+                        merge_move(res, res_pointer, 1);
+                        merge_move(tmp2, pointer2, 1);
                     }
                 }
             }
-            if (pointer1 + block_size < N)
-                tmp1.move(block_size);
-            pointer1 += block_size;
-            if (pointer2 + block_size < N)
-                tmp2.move(block_size);
-            pointer2 += block_size;
+            merge_move(tmp1, pointer1, block_size);
+            merge_move(tmp2, pointer2, block_size);
         }
     }
 }// namespace
@@ -64,7 +55,7 @@ void Tape_sorter::sort(std::string input_file, std::string output_file) {
     std::vector<Tape> tmp;
     Tape tmp1(cfg.FILE_DIR, input_file);
     std::string filename = tmp1.filename;
-    Tape tmp3 = tmp1.make_copy(filename + "3");
+    Tape tmp3 = tmp1.make_copy(filename + "_tmp3");
     for (size_t i = 0; i < N;) {
         std::vector<int> list;
         for (int j = 0; j < M && i < N; j++, i++) {
@@ -80,13 +71,14 @@ void Tape_sorter::sort(std::string input_file, std::string output_file) {
     tmp1.swap(tmp3);
     tmp1.move_to_start();
     tmp3.move_to_start();
-    Tape tmp2 = tmp1.make_copy(filename + "2");
+    Tape tmp2 = tmp1.make_copy(filename + "_tmp2");
+    int tmp_file_number = 0, max_tmp_files = 2;
     for (size_t block_size = M; 2 * block_size <= N + block_size - 1; block_size *= 2) {
         merge_blocks(tmp1, tmp2, tmp3, block_size, N);
         tmp1.swap(tmp3);
         tmp1.move_to_start();
         tmp3.move_to_start();
-        Tape tmp4 = tmp1.make_copy(filename + "tmp" + std::to_string(block_size));
+        Tape tmp4 = tmp1.make_copy(filename + "_tmp" + std::to_string(tmp_file_number++ % max_tmp_files));
         tmp2.swap(tmp4);
     }
     Tape result = tmp1.make_copy(cfg.FILE_DIR + "\\" + output_file);
