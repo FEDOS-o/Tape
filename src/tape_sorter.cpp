@@ -22,17 +22,13 @@ void Tape_sorter::sort(std::string input_file, std::string output_file) {
     }
     tmp1.swap(tmp3);
     tmp1.move_to_start();
-    tmp1.move_right();
     tmp3.move_to_start();
-    tmp3.move_right();
     Tape tmp2 = tmp1.make_copy(filename + "2");
     for (size_t block_size = M; 2 * block_size < N + block_size - 1; block_size *= 2) {
         merge_blocks(tmp1, tmp2, tmp3, block_size, N);
         tmp1.swap(tmp3);
         tmp1.move_to_start();
-        tmp1.move_right();
         tmp3.move_to_start();
-        tmp3.move_right();
         Tape tmp4 = tmp1.make_copy(filename + "tmp" + std::to_string(block_size));
         tmp2.swap(tmp4);
     }

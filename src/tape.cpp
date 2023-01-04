@@ -62,6 +62,7 @@ void Tape::w_current_cell(int new_value) {
 void Tape::move_to_start() {
     std::this_thread::sleep_for(std::chrono::milliseconds(cfg.S_DELAY * file.tellg()));
     file.seekg(0);
+    move_right();
 }
 
 void Tape::move_right() {
