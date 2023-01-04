@@ -23,7 +23,7 @@ TEST(tape, straight_read) {
    Tape t(cfg.FILE_DIR, "sample123");
    for (int i = 1; i < 11; i++) {
        t.move_right();
-       EXPECT_EQ(t.r_current_cell(), i);
+       EXPECT_EQ(t.read(), i);
    }
 }
 
@@ -31,10 +31,10 @@ TEST(tape, double_read) {
     Tape t(cfg.FILE_DIR, "sample123");
     for (int i = 1; i < 11; i++) {
         t.move_right();
-        EXPECT_EQ(t.r_current_cell(), i);
+        EXPECT_EQ(t.read(), i);
     }
     for (int i = 10; i > 0; i--) {
-        EXPECT_EQ(t.r_current_cell(), i);
+        EXPECT_EQ(t.read(), i);
         t.move_left();
     }
 }
@@ -42,28 +42,28 @@ TEST(tape, double_read) {
 TEST(tape, haotic_reading) {
     Tape t(cfg.FILE_DIR, "sample123");
     t.move_right();
-    EXPECT_EQ(t.r_current_cell(), 1);
+    EXPECT_EQ(t.read(), 1);
     t.move_right();
-    EXPECT_EQ(t.r_current_cell(), 2);
+    EXPECT_EQ(t.read(), 2);
     t.move_right();
-    EXPECT_EQ(t.r_current_cell(), 3);
+    EXPECT_EQ(t.read(), 3);
     t.move_right();
-    EXPECT_EQ(t.r_current_cell(), 4);
+    EXPECT_EQ(t.read(), 4);
     t.move_left();
-    EXPECT_EQ(t.r_current_cell(), 3);
+    EXPECT_EQ(t.read(), 3);
     t.move_left();
-    EXPECT_EQ(t.r_current_cell(), 2);
+    EXPECT_EQ(t.read(), 2);
     t.move_right();
     t.move_right();
     t.move_right();
     t.move_right();
     t.move_right();
     t.move_right();
-    EXPECT_EQ(t.r_current_cell(), 8);
+    EXPECT_EQ(t.read(), 8);
     t.move_left();
     t.move_left();
     t.move_left();
-    EXPECT_EQ(t.r_current_cell(), 5);
+    EXPECT_EQ(t.read(), 5);
 }
 
 TEST(tape, make_copy) {
@@ -88,8 +88,8 @@ TEST(tape, make_copy_position) {
         Tape t_copy = t.make_copy(cfg.TMP_DIR + "\\" + "sample123_copy");
         filename2 = t_copy.filename;
         for (int i = 3; i < 11; i++) {
-            EXPECT_EQ(t.r_current_cell(), i);
-            EXPECT_EQ(t.r_current_cell(), t_copy.r_current_cell());
+            EXPECT_EQ(t.read(), i);
+            EXPECT_EQ(t.read(), t_copy.read());
             t.move_right();
             t_copy.move_right();
         }
@@ -104,7 +104,7 @@ TEST(tape, write_straight) {
         filename = t.filename;
         for (int i = 1; i < 11; i++) {
             t.move_right();
-            t.w_current_cell(11 - i);
+            t.write(11 - i);
         }
     }
     EXPECT_TRUE(compare_files(filename, cfg.FILE_DIR + "\\sample321_formatted"));
@@ -117,13 +117,13 @@ TEST(tape, write_double) {
         filename = t.filename;
         for (int i = 1; i < 11; i++) {
             t.move_right();
-            t.w_current_cell(11 - i);
+            t.write(11 - i);
         }
-        t.w_current_cell(10);
+        t.write(10);
         for (int i = 2; i < 11; i++) {
             t.move_left();
-            EXPECT_EQ(t.r_current_cell(), i);
-            t.w_current_cell(11 - i);
+            EXPECT_EQ(t.read(), i);
+            t.write(11 - i);
         }
     }
     EXPECT_TRUE(compare_files(filename, cfg.FILE_DIR + "\\sample123_formatted"));
@@ -138,20 +138,20 @@ TEST(tape, haotic_writing) {
         t.move_right();
         t.move_right();
         t.move_right();
-        t.w_current_cell(25);
+        t.write(25);
         t.move_left();
-        t.w_current_cell(17);
+        t.write(17);
         t.move_right();
         t.move_right();
         t.move_right();
         t.move_right();
-        t.w_current_cell(555);
+        t.write(555);
         t.move_left();
-        t.w_current_cell(777);
+        t.write(777);
         t.move_right();
         t.move_right();
         t.move_right();
-        t.w_current_cell(1111);
+        t.write(1111);
     }
     EXPECT_TRUE(compare_files(filename, cfg.FILE_DIR + "\\" + "haotic_writing_result_formatted"));
 }
@@ -163,11 +163,11 @@ TEST(tape, move_to_start) {
         filename = t.filename;
         for (int i = 1; i < 4; i++) {
             t.move_right();
-            t.w_current_cell(999 + i);
+            t.write(999 + i);
         }
         t.move_to_start();
         for (int i = 10; i >0; i--) {
-            t.w_current_cell(i);
+            t.write(i);
             t.move_right();
         }
     }
@@ -183,19 +183,19 @@ TEST(tape, move) {
         filename2 = t_copy.filename;
         t.move(5);
         t_copy.move(5);
-        EXPECT_EQ(t.r_current_cell(), t_copy.r_current_cell());
+        EXPECT_EQ(t.read(), t_copy.read());
         t.move(-3);
         t_copy.move(-3);
-        EXPECT_EQ(t.r_current_cell(), t_copy.r_current_cell());
+        EXPECT_EQ(t.read(), t_copy.read());
         t.move(7);
         t_copy.move(7);
-        EXPECT_EQ(t.r_current_cell(), t_copy.r_current_cell());
+        EXPECT_EQ(t.read(), t_copy.read());
         t.move_left();
         t_copy.move(-1);
-        EXPECT_EQ(t.r_current_cell(), t_copy.r_current_cell());
+        EXPECT_EQ(t.read(), t_copy.read());
         t.move_right();
         t_copy.move(1);
-        EXPECT_EQ(t.r_current_cell(), t_copy.r_current_cell());
+        EXPECT_EQ(t.read(), t_copy.read());
     }
     EXPECT_TRUE(compare_files(filename1, filename2));
 }
@@ -209,15 +209,15 @@ TEST(tape, swap) {
         filename2 = t2.filename;
         t1.move(3);
         t2.move(6);
-        EXPECT_EQ(t1.r_current_cell(),3);
-        EXPECT_EQ(t2.r_current_cell(),5);
+        EXPECT_EQ(t1.read(),3);
+        EXPECT_EQ(t2.read(),5);
         t1.swap(t2);
-        EXPECT_EQ(t1.r_current_cell(),5);
-        EXPECT_EQ(t2.r_current_cell(),3);
+        EXPECT_EQ(t1.read(),5);
+        EXPECT_EQ(t2.read(),3);
         t1.move_right();
-        EXPECT_EQ(t1.r_current_cell(),4);
+        EXPECT_EQ(t1.read(),4);
         t2.move_left();
-        EXPECT_EQ(t2.r_current_cell(),2);
+        EXPECT_EQ(t2.read(),2);
     }
     EXPECT_TRUE(compare_files(filename2, cfg.FILE_DIR + "\\sample321_formatted"));
     EXPECT_TRUE(compare_files(filename1, cfg.FILE_DIR + "\\sample123_formatted"));

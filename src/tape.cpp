@@ -43,12 +43,12 @@ Tape Tape::make_copy(const std::string &_filename) const {
     return {_filename, current, pos};
 }
 
-int Tape::r_current_cell() const {
+int Tape::read() const {
     std::this_thread::sleep_for(std::chrono::milliseconds(cfg.R_DELAY));
     return current;
 }
 
-void Tape::w_current_cell(int new_value) {
+void Tape::write(int new_value) {
     std::this_thread::sleep_for(std::chrono::milliseconds(cfg.W_DELAY));
     file.seekg(-NUM_SIZE - 1, std::ios::cur);
     auto pos = file.tellg();

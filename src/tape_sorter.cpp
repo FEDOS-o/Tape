@@ -12,12 +12,12 @@ void Tape_sorter::sort(std::string input_file, std::string output_file) {
         std::vector<int> list;
         for (int j = 0; j < M && i < N; j++, i++) {
             tmp1.move_right();
-            list.push_back(tmp1.r_current_cell());
+            list.push_back(tmp1.read());
         }
         std::sort(list.begin(), list.end());
         for (auto x: list) {
             tmp3.move_right();
-            tmp3.w_current_cell(x);
+            tmp3.write(x);
         }
     }
     tmp1.swap(tmp3);
@@ -43,26 +43,26 @@ void Tape_sorter::merge_blocks(Tape& tmp1, Tape& tmp2, Tape& res, size_t block_s
         size_t border1 = pointer1 + block_size, border2 = std::min(pointer2 + block_size, N);
         while (pointer1 != border1 || pointer2 != border2) {
             if (pointer1 == border1) {
-                auto x = tmp2.r_current_cell();
-                res.w_current_cell(x);
+                auto x = tmp2.read();
+                res.write(x);
                 pointer2++;
                 res.move_right();
                 tmp2.move_right();
             } else if (pointer2 == border2) {
-                auto x = tmp1.r_current_cell();
-                res.w_current_cell(x);
+                auto x = tmp1.read();
+                res.write(x);
                 pointer1++;
                 res.move_right();
                 tmp1.move_right();
             } else {
-                auto x1 = tmp1.r_current_cell(), x2 = tmp2.r_current_cell();
+                auto x1 = tmp1.read(), x2 = tmp2.read();
                 if (x1 <= x2) {
-                    res.w_current_cell(x1);
+                    res.write(x1);
                     pointer1++;
                     res.move_right();
                     tmp1.move_right();
                 } else {
-                    res.w_current_cell(x2);
+                    res.write(x2);
                     pointer2++;
                     res.move_right();
                     tmp2.move_right();

@@ -18,9 +18,9 @@ public:
 
     Tape make_copy(const std::string &filename) const;
 
-    int r_current_cell() const;
+    int read() const;
 
-    void w_current_cell(int);
+    void write(int);
 
     void move_left();
 
