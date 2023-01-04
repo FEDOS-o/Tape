@@ -26,6 +26,10 @@ bool compare_files(std::string filename1, std::string filename2) {
     return f1 == f2;
 }
 
+TEST(tape, not_existing_file) {
+        EXPECT_ANY_THROW(Tape(cfg.FILE_DIR + "not_existing_file"));
+}
+
 TEST(tape, straight_read) {
     Tape t(cfg.FILE_DIR + "sample123");
     for (int i = 1; i < 11; i++) {
