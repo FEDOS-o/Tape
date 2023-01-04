@@ -1,0 +1,7 @@
+$N$ = 18
+$M$ = 4
+$R_DELAY$ = 0
+$W_DELAY$ = 0
+$S_DELAY$ = 0
+$TMP_DIR$ = ..\tests\files\tmp
+$FILE_DIR$ = ..\tests\files
