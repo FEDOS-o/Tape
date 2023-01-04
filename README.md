@@ -5,5 +5,5 @@ Tape_sorter impements merge sort, which have only M bytes to store cells of tape
 
 You may edit config.txt to change read\write delays, size of tape, bytes number M and directory for files and tamporary files.
 
-#Usage 
+# Usage 
 main.exe [input_file] [output_file]
