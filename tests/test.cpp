@@ -222,3 +222,36 @@ TEST(tape, swap) {
     EXPECT_TRUE(compare_files(filename2, cfg.FILE_DIR + "\\sample321_formatted"));
     EXPECT_TRUE(compare_files(filename1, cfg.FILE_DIR + "\\sample123_formatted"));
 }
+
+
+TEST(tape_sorter, already_sorted) {
+    {
+        cfg.N = 10;
+        cfg.M = 3;
+        Tape_sorter::sort("sample123", "sample123_sort_result");
+    }
+    EXPECT_TRUE(compare_files(cfg.FILE_DIR + "\\sample123_formatted", cfg.FILE_DIR + "\\sample123_sort_result"));
+}
+
+TEST(tape_sorter, reversed_order) {
+    {
+        cfg.N = 10;
+        cfg.M = 3;
+        Tape_sorter::sort("sample321", "sample123_sort_result");
+    }
+    bool res = compare_files(cfg.FILE_DIR + "\\sample123_formatted", cfg.FILE_DIR + "\\sample123_sort_result");
+    EXPECT_TRUE(res);
+}
+
+
+TEST(tape_sorter, different_M) {
+    for (int i = 2; i < 20; i++) {
+        {
+            cfg.N = 10;
+            cfg.M = i;
+            Tape_sorter::sort("sample321", "sample123_sort_result");
+        }
+        bool res = compare_files(cfg.FILE_DIR + "\\sample123_formatted", cfg.FILE_DIR + "\\sample123_sort_result");
+        EXPECT_TRUE(res);
+    }
+}
