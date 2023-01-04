@@ -3,6 +3,8 @@
 #include <sstream>
 #include <string>
 #include <iostream>
+// расходы памяти на остальную программу (не хранение части ленты)
+const int CONST_RAM = 0;
 
 struct Config {
     size_t N;
@@ -23,6 +25,8 @@ struct Config {
                 sin >> N;
             } else if (line.find("$M$") != -1) {
                 sin >> M;
+                M -= CONST_RAM;
+                M /= sizeof(int);
             } else if (line.find("$R_DELAY$") != -1) {
                 sin >> R_DELAY;
             } else if (line.find("$W_DELAY$") != -1) {

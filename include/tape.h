@@ -9,15 +9,19 @@ struct Tape {
     Tape(const std::string &path);
 
 private:
+
     Tape(const std::string &_filename, int current, auto pos);
+
 public:
     ~Tape() {
         file.flush();
         file.close();
     }
 
+    //make copy of tape and place it to TMP DIR with filename
     Tape make_copy(const std::string &filename) const;
 
+    //save tape to the path
     void save(const std::string& path) const;
 
     int read() const;
@@ -30,21 +34,10 @@ public:
 
     void move_to_start();
 
+    //make shift to variable amount of cells
     void move(int);
 
-    void swap(Tape &other) {
-        using std::swap;
-        swap(current, other.current);
-        swap(filename, other.filename);
-        auto pos1 = file.tellg();
-        auto pos2 = other.file.tellg();
-        file.close();
-        other.file.close();
-        file = std::fstream(filename, std::ios::in | std::ios::out);
-        file.seekg(pos2);
-        other.file = std::fstream(other.filename, std::ios::in | std::ios::out);
-        other.file.seekg(pos1);
-    }
+    void swap(Tape &other);
 
     std::string filename;
 

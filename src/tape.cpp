@@ -101,3 +101,17 @@ void Tape::move_left() {
     file.seekg(-2 * NUM_SIZE - 2, std::ios::cur);
     move_right();
 }
+
+void Tape::swap(Tape &other) {
+    using std::swap;
+    swap(current, other.current);
+    swap(filename, other.filename);
+    auto pos1 = file.tellg();
+    auto pos2 = other.file.tellg();
+    file.close();
+    other.file.close();
+    file = std::fstream(filename, std::ios::in | std::ios::out);
+    file.seekg(pos2);
+    other.file = std::fstream(other.filename, std::ios::in | std::ios::out);
+    other.file.seekg(pos1);
+}

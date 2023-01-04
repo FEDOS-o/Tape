@@ -48,8 +48,10 @@ namespace {
             merge_move(tmp2, pointer2, block_size);
         }
     }
-}// namespace
+}// anonymous namespace
 
+
+// sorting using merge_sort
 void Tape_sorter::sort(std::string input_file, std::string output_file) {
     size_t N = cfg.N, M = cfg.M;
     std::vector<Tape> tmp;
