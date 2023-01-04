@@ -11,6 +11,10 @@ extern Config cfg;
 
 Tape::Tape(const std::string &_dirname, const std::string &_filename) {
     std::ifstream in(_dirname + "\\" + _filename);
+    if (!in) {
+        std::cerr << "Can't open \"" + _dirname + "\\" + _filename + "\" file";
+        throw std::exception();
+    }
     filename = cfg.FILE_DIR + "\\tmp\\" + _filename + "_formatted";
     std::ofstream out(filename);
     int x;
@@ -47,9 +51,12 @@ int Tape::r_current_cell() const {
 void Tape::w_current_cell(int new_value) {
     std::this_thread::sleep_for(std::chrono::milliseconds(cfg.W_DELAY));
     file.seekg(-NUM_SIZE - 1, std::ios::cur);
-    file << new_value << std::string(NUM_SIZE - std::to_string(new_value).size(), ' ');
+    auto pos = file.tellg();
+    file << new_value << std::string(NUM_SIZE - std::to_string(new_value).size() + 1, ' ');
+    pos = file.tellg();
     current = new_value;
     file.seekg(file.tellg(), std::ios::beg);
+    pos = file.tellg();
 }
 
 void Tape::move_to_start() {
@@ -62,9 +69,11 @@ void Tape::move_right() {
     int x;
     file >> x;
     current = x;
+    auto pos = file.tellg();
     while (file.get() == ' ') {
         //do nothing;
     }
+    pos = file.tellg();
     file.seekg(-1, std::ios::cur);
 }
 
@@ -85,6 +94,8 @@ void Tape::move(int shift) {
 
 void Tape::move_left() {
     std::this_thread::sleep_for(std::chrono::milliseconds(cfg.S_DELAY));
+    auto pos = file.tellg();
     file.seekg(-2 * NUM_SIZE - 2, std::ios::cur);
+    pos == file.tellg();
     move_right();
 }
