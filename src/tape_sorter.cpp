@@ -53,9 +53,9 @@ namespace {
 void Tape_sorter::sort(std::string input_file, std::string output_file) {
     size_t N = cfg.N, M = cfg.M;
     std::vector<Tape> tmp;
-    Tape tmp1(cfg.FILE_DIR, input_file);
+    Tape tmp1(cfg.FILE_DIR + input_file);
     std::string filename = tmp1.filename;
-    Tape tmp3 = tmp1.make_copy(filename + "_tmp3");
+    Tape tmp3 = tmp1.make_copy(input_file + "_formatted3");
     for (size_t i = 0; i < N;) {
         std::vector<int> list;
         for (int j = 0; j < M && i < N; j++, i++) {
@@ -71,15 +71,15 @@ void Tape_sorter::sort(std::string input_file, std::string output_file) {
     tmp1.swap(tmp3);
     tmp1.move_to_start();
     tmp3.move_to_start();
-    Tape tmp2 = tmp1.make_copy(filename + "_tmp2");
+    Tape tmp2 = tmp1.make_copy(input_file + "_formatted2");
     int tmp_file_number = 0, max_tmp_files = 2;
     for (size_t block_size = M; 2 * block_size <= N + block_size - 1; block_size *= 2) {
         merge_blocks(tmp1, tmp2, tmp3, block_size, N);
         tmp1.swap(tmp3);
         tmp1.move_to_start();
         tmp3.move_to_start();
-        Tape tmp4 = tmp1.make_copy(filename + "_tmp" + std::to_string(tmp_file_number++ % max_tmp_files));
+        Tape tmp4 = tmp1.make_copy(input_file + "_formatted" + std::to_string(tmp_file_number++ % max_tmp_files));
         tmp2.swap(tmp4);
     }
-    Tape result = tmp1.make_copy(cfg.FILE_DIR + "\\" + output_file);
+    tmp1.save(cfg.FILE_DIR + "\\" + output_file);
 }

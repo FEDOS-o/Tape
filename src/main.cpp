@@ -8,6 +8,5 @@ Config cfg("..\\config.txt");
 
 int main() {
     Tape_sorter::sort("sample", "output");
-    //std::filesystem::remove_all(cfg.FILE_DIR + "\\tmp");
     return 0;
 }

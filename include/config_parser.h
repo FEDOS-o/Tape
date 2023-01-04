@@ -31,8 +31,10 @@ struct Config {
                 sin >> S_DELAY;
             } else if (line.find("$FILE_DIR$") != -1) {
                 sin >> FILE_DIR;
+                FILE_DIR += "\\";
             } else if (line.find("$TMP_DIR") != -1) {
                 sin >> TMP_DIR;
+                TMP_DIR += "\\";
             }
         }
     }

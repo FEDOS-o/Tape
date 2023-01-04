@@ -6,7 +6,7 @@
 
 struct Tape {
 
-    Tape(const std::string &dirname, const std::string &filename);
+    Tape(const std::string &path);
 
 private:
     Tape(const std::string &_filename, int current, auto pos);
@@ -17,6 +17,8 @@ public:
     }
 
     Tape make_copy(const std::string &filename) const;
+
+    void save(const std::string& path) const;
 
     int read() const;
 

@@ -26,7 +26,7 @@ bool compare_files(std::string filename1, std::string filename2) {
 }
 
 TEST(tape, straight_read) {
-    Tape t(cfg.FILE_DIR, "sample123");
+    Tape t(cfg.FILE_DIR + "sample123");
     for (int i = 1; i < 11; i++) {
         t.move_right();
         EXPECT_EQ(t.read(), i);
@@ -34,7 +34,7 @@ TEST(tape, straight_read) {
 }
 
 TEST(tape, double_read) {
-    Tape t(cfg.FILE_DIR, "sample123");
+    Tape t(cfg.FILE_DIR + "sample123");
     for (int i = 1; i < 11; i++) {
         t.move_right();
         EXPECT_EQ(t.read(), i);
@@ -46,7 +46,7 @@ TEST(tape, double_read) {
 }
 
 TEST(tape, haotic_reading) {
-    Tape t(cfg.FILE_DIR, "sample123");
+    Tape t(cfg.FILE_DIR + "sample123");
     t.move_right();
     EXPECT_EQ(t.read(), 1);
     t.move_right();
@@ -75,9 +75,9 @@ TEST(tape, haotic_reading) {
 TEST(tape, make_copy) {
     std::string filename1, filename2;
     {
-        Tape t(cfg.FILE_DIR, "sample123");
+        Tape t(cfg.FILE_DIR + "sample123");
         filename1 = t.filename;
-        Tape t_copy = t.make_copy(cfg.TMP_DIR + "\\sample123_copy");
+        Tape t_copy = t.make_copy("sample123_copy");
         filename2 = t_copy.filename;
     }
     EXPECT_TRUE(compare_files(filename1, filename2));
@@ -86,12 +86,12 @@ TEST(tape, make_copy) {
 TEST(tape, make_copy_position) {
     std::string filename1, filename2;
     {
-        Tape t(cfg.FILE_DIR, "sample123");
+        Tape t(cfg.FILE_DIR + "sample123");
         t.move_right();
         t.move_right();
         t.move_right();
         filename1 = t.filename;
-        Tape t_copy = t.make_copy(cfg.TMP_DIR + "\\" + "sample123_copy");
+        Tape t_copy = t.make_copy("sample123_copy");
         filename2 = t_copy.filename;
         for (int i = 3; i < 11; i++) {
             EXPECT_EQ(t.read(), i);
@@ -106,7 +106,7 @@ TEST(tape, make_copy_position) {
 TEST(tape, write_straight) {
     std::string filename;
     {
-        Tape t(cfg.FILE_DIR, "sample123");
+        Tape t(cfg.FILE_DIR + "sample123");
         filename = t.filename;
         for (int i = 1; i < 11; i++) {
             t.move_right();
@@ -119,7 +119,7 @@ TEST(tape, write_straight) {
 TEST(tape, write_double) {
     std::string filename;
     {
-        Tape t(cfg.FILE_DIR, "sample123");
+        Tape t(cfg.FILE_DIR + "sample123");
         filename = t.filename;
         for (int i = 1; i < 11; i++) {
             t.move_right();
@@ -139,7 +139,7 @@ TEST(tape, haotic_writing) {
     //1 17 25 4 777 555 7 1111 9 10
     std::string filename;
     {
-        Tape t(cfg.FILE_DIR, "sample123");
+        Tape t(cfg.FILE_DIR + "sample123");
         filename = t.filename;
         t.move_right();
         t.move_right();
@@ -165,7 +165,7 @@ TEST(tape, haotic_writing) {
 TEST(tape, move_to_start) {
     std::string filename;
     {
-        Tape t(cfg.FILE_DIR, "sample123");
+        Tape t(cfg.FILE_DIR + "sample123");
         filename = t.filename;
         for (int i = 1; i < 4; i++) {
             t.move_right();
@@ -183,9 +183,9 @@ TEST(tape, move_to_start) {
 TEST(tape, move) {
     std::string filename1, filename2;
     {
-        Tape t(cfg.FILE_DIR, "sample123");
+        Tape t(cfg.FILE_DIR + "sample123");
         filename1 = t.filename;
-        Tape t_copy = t.make_copy(cfg.TMP_DIR + "\\" + "sample123_copy");
+        Tape t_copy = t.make_copy("sample123_copy");
         filename2 = t_copy.filename;
         t.move(5);
         t_copy.move(5);
@@ -209,9 +209,9 @@ TEST(tape, move) {
 TEST(tape, swap) {
     std::string filename1, filename2;
     {
-        Tape t1(cfg.FILE_DIR, "sample123");
+        Tape t1(cfg.FILE_DIR + "sample123");
         filename1 = t1.filename;
-        Tape t2(cfg.FILE_DIR, "sample321");
+        Tape t2(cfg.FILE_DIR + "sample321");
         filename2 = t2.filename;
         t1.move(3);
         t2.move(6);
@@ -280,7 +280,7 @@ TEST(tape_sorter, random_numbers) {
     }
     random_test.close();
     {
-        Tape answer(cfg.FILE_DIR, "random_test_sorted");
+        Tape answer(cfg.FILE_DIR + "random_test_sorted");
         Tape_sorter::sort("random_test", "random_test_result");
     }
     bool cmp = compare_files(cfg.TMP_DIR + "\\random_test_sorted_formatted", cfg.FILE_DIR + "\\random_test_result");
@@ -307,7 +307,7 @@ TEST(tape_sorter, random_number_diff_M) {
         }
         random_test.close();
         {
-            Tape answer(cfg.FILE_DIR, "random_test_sorted");
+            Tape answer(cfg.FILE_DIR + "random_test_sorted");
             Tape_sorter::sort("random_test", "random_test_result");
         }
         bool cmp = compare_files(cfg.TMP_DIR + "\\random_test_sorted_formatted", cfg.FILE_DIR + "\\random_test_result");
