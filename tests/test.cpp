@@ -71,10 +71,10 @@ TEST(tape, make_copy) {
     {
         Tape t(cfg.FILE_DIR, "sample123");
         filename1 = t.filename;
-        Tape t_copy = t.make_copy("sample123_copy");
+        Tape t_copy = t.make_copy(cfg.TMP_DIR + "\\sample123_copy");
         filename2 = t_copy.filename;
     }
-  //  EXPECT_TRUE(compare_files(filename1, cfg.TMP_DIR + "\\" + filename2));
+    EXPECT_TRUE(compare_files(filename1, filename2));
 }
 
 TEST(tape, make_copy_position) {
