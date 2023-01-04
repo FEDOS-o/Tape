@@ -1,5 +1,5 @@
 $N$ = 18
-$M$ = 4
+$M$ = 30
 $R_DELAY$ = 1
 $W_DELAY$ = 1
 $S_DELAY$ = 1

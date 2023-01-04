@@ -68,7 +68,7 @@ void Tape::write(int new_value) {
 }
 
 void Tape::move_to_start() {
-    std::this_thread::sleep_for(std::chrono::milliseconds(cfg.S_DELAY * file.tellg()));
+    std::this_thread::sleep_for(std::chrono::milliseconds(cfg.S_DELAY * (file.tellg() / (NUM_SIZE + 1))));
     file.seekg(0);
     move_right();
 }
